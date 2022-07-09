@@ -34,7 +34,7 @@ public class PassiveProductController {
   }
   
   @PostMapping
-  public Mono<PassiveProduct> register(@Valid @RequestBody PassiveProduct passive){
+  public Mono<PassiveProduct> createPassive(@Valid @RequestBody PassiveProduct passive){
       return passivesService.save(passive);
   }
   
@@ -54,7 +54,7 @@ public class PassiveProductController {
       c.setStatus(passive.getStatus());
       c.setIdClient(passive.getIdClient());
       
-      return passivesService.update(c);
+      return passivesService.save(c);
     }).map(c -> ResponseEntity.created(URI.create("/api/passive/".concat(c.getId())))
         .contentType(MediaType.APPLICATION_JSON_UTF8).body(c)).defaultIfEmpty(ResponseEntity.notFound().build());
   }

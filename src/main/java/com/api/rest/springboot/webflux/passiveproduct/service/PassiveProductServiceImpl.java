@@ -34,12 +34,6 @@ public class PassiveProductServiceImpl implements PassiveProductService {
   }
 
   @Override
-  public Mono<PassiveProduct> update(PassiveProduct passive) {
-    
-    return passivesRepository.save(passive);
-  }
-
-  @Override
   public Mono<Void> delete(PassiveProduct passive) {
     
     return passivesRepository.delete(passive);

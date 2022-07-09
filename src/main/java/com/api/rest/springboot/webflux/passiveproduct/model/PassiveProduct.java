@@ -25,7 +25,7 @@ public class PassiveProduct {
   @Size(min = 13 , max = 14, message = ValidationConstants.SIZE_MIN_MAX)
   private String accountNumber;
   
-  @NotNull(message = ValidationConstants.NOT_NULL)
+  @NotEmpty(message = ValidationConstants.NOT_EMPTY)
   @Size(min = 1)
   private String status;
   
