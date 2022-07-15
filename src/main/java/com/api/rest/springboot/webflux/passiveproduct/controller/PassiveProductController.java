@@ -1,12 +1,10 @@
 package com.api.rest.springboot.webflux.passiveproduct.controller;
 
-import java.net.URI;
-
 import javax.validation.Valid;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.rest.springboot.webflux.passiveproduct.model.PassiveProduct;
-import com.api.rest.springboot.webflux.passiveproduct.service.PassiveProductService;
-
+import com.api.rest.springboot.webflux.passiveproduct.dto.PassiveProductDto;
+import com.api.rest.springboot.webflux.passiveproduct.resource.PassiveProductResource;
+import org.slf4j.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,43 +23,39 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/passive")
 public class PassiveProductController {
   
+  private static final Logger logger = LoggerFactory.getLogger(PassiveProductController.class);
+  
   @Autowired
-  private PassiveProductService passivesService;
+  private PassiveProductResource passiveProductResource;
   
   @GetMapping
-  public Flux<PassiveProduct> toList(){
-    return passivesService.findAll();
+  public Flux<PassiveProductDto> findAll(){
+    return passiveProductResource.findAll();
   }
   
   @PostMapping
-  public Mono<PassiveProduct> createPassive(@Valid @RequestBody PassiveProduct passive){
-      return passivesService.save(passive);
+  public Mono<PassiveProductDto> createPassive(@Valid @RequestBody PassiveProductDto passiveProductDto){
+      return passiveProductResource.create(passiveProductDto);
   }
   
   @GetMapping("/{id}")
-  public Mono<ResponseEntity<PassiveProduct>> listById(@PathVariable String id){
-    return passivesService.findById(id).map(c -> ResponseEntity.ok()
-        .contentType(MediaType.APPLICATION_JSON_UTF8)
-        .body(c))
-        .defaultIfEmpty(ResponseEntity.notFound().build());
+  public Mono<PassiveProductDto> listById(@PathVariable String id){
+    return passiveProductResource.findById(id);
   }
   
   @PutMapping("/{id}")
-  public Mono<ResponseEntity<PassiveProduct>> edit(@RequestBody PassiveProduct passive, @PathVariable String id) {
-    return passivesService.findById(id).flatMap(c -> {
-      c.setTypeAccount(passive.getTypeAccount());
-      c.setAccountNumber(passive.getAccountNumber());
-      c.setStatus(passive.getStatus());
-      c.setIdClient(passive.getIdClient());
-      
-      return passivesService.save(c);
-    }).map(c -> ResponseEntity.created(URI.create("/api/passive/".concat(c.getId())))
-        .contentType(MediaType.APPLICATION_JSON_UTF8).body(c)).defaultIfEmpty(ResponseEntity.notFound().build());
+  public Mono<PassiveProductDto> update(@RequestBody PassiveProductDto passiveProductDto, @PathVariable String id){
+    return passiveProductResource.update(passiveProductDto, id);
+  }
+  
+  @DeleteMapping("/{id}")
+  public Mono<Void> remove(@PathVariable String id){
+    return passiveProductResource.delete(id);
   }
   
   @GetMapping("/clientPassive/{idClient}")
-  public Flux<PassiveProduct> listByIdClient(@PathVariable("idClient") String idClient){
-    return passivesService.byIdClient(idClient);
+  public Flux<PassiveProductDto> listByIdClient(@PathVariable("idClient") String idClient) {
+    return passiveProductResource.listByIdClient(idClient);
   }
 
 }
