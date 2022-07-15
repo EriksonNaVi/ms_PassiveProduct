@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: ms_PassiveProduct
+  cloud:
+    config:
+      uri: http://localhost:8081
+      username: maven
+      password: m4ven
